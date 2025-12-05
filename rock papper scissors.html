@@ -1,0 +1,181 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Rock Paper Scissors Game</title>
+    
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            margin: 0;
+            background-color: #e0f7fa; /* Light cyan background */
+            color: #333;
+        }
+
+        .game-container {
+            background-color: #ffffff;
+            padding: 40px;
+            border-radius: 12px;
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
+            text-align: center;
+            width: 90%;
+            max-width: 500px;
+        }
+
+        h1 {
+            color: #00796b;
+            margin-bottom: 25px;
+            font-size: 2em;
+        }
+
+        .score-board {
+            display: flex;
+            justify-content: space-around;
+            padding: 15px;
+            margin-bottom: 30px;
+            border: 2px solid #00bcd4;
+            border-radius: 8px;
+            font-size: 1.2em;
+            background-color: #e0f7fa;
+        }
+        
+        #user-score, #computer-score {
+            font-weight: bold;
+        }
+
+        .choices {
+            margin-bottom: 30px;
+        }
+
+        .choices button {
+            padding: 15px 25px;
+            margin: 8px;
+            font-size: 2em; /* Larger icons/text for better tapping */
+            cursor: pointer;
+            border: none;
+            border-radius: 50%; /* Circle shape */
+            transition: transform 0.1s ease-in-out, background-color 0.2s;
+            box-shadow: 0 4px #9e9e9e;
+            color: #fff;
+            line-height: 1; /* Center icon */
+        }
+
+        #rock { background-color: #f44336; } /* Red */
+        #paper { background-color: #4caf50; } /* Green */
+        #scissors { background-color: #2196f3; } /* Blue */
+
+        .choices button:active {
+            transform: translateY(2px);
+            box-shadow: 0 2px #9e9e9e;
+        }
+        
+        #result {
+            min-height: 40px; /* Reserve space */
+            margin-top: 20px;
+            font-size: 1.5em;
+            font-weight: 600;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="game-container">
+        <h1>Rock Paper Scissors</h1>
+        
+        <div class="score-board">
+            <div id="user-score">You: 0</div>
+            <div id="computer-score">Comp: 0</div>
+        </div>
+
+        <div class="choices">
+            <button id="rock">✊</button>
+            <button id="paper">✋</button>
+            <button id="scissors">✌️</button>
+        </div>
+
+        <div id="result">Pick your hand!</div>
+    </div>
+
+    <script>
+        // Game State
+        let userScore = 0;
+        let computerScore = 0;
+        const choices = ['rock', 'paper', 'scissors'];
+
+        // DOM Elements
+        const userScoreDisplay = document.getElementById('user-score');
+        const computerScoreDisplay = document.getElementById('computer-score');
+        const resultDisplay = document.getElementById('result');
+        const choiceButtons = document.querySelectorAll('.choices button');
+
+        // Function to generate the computer's choice
+        function getComputerChoice() {
+            const randomIndex = Math.floor(Math.random() * 3);
+            return choices[randomIndex];
+        }
+
+        // Function to map choice to a readable emoji
+        function getEmoji(choice) {
+            switch (choice) {
+                case 'rock': return '✊';
+                case 'paper': return '✋';
+                case 'scissors': return '✌️';
+                default: return '';
+            }
+        }
+
+        // Function to determine the winner
+        function determineWinner(userChoice, computerChoice) {
+            const userEmoji = getEmoji(userChoice);
+            const compEmoji = getEmoji(computerChoice);
+
+            if (userChoice === computerChoice) {
+                resultDisplay.style.color = '#ff9800'; // Orange for tie
+                return `It's a **tie**! Both chose ${userEmoji}.`;
+            } else if (
+                (userChoice === 'rock' && computerChoice === 'scissors') ||
+                (userChoice === 'paper' && computerChoice === 'rock') ||
+                (userChoice === 'scissors' && computerChoice === 'paper')
+            ) {
+                // User wins
+                userScore++;
+                userScoreDisplay.textContent = `You: ${userScore}`;
+                resultDisplay.style.color = '#4caf50'; // Green for win
+                return `You **win**! ${userEmoji} beats ${compEmoji}.`;
+            } else {
+                // Computer wins
+                computerScore++;
+                computerScoreDisplay.textContent = `Comp: ${computerScore}`;
+                resultDisplay.style.color = '#f44336'; // Red for loss
+                return `You **lose**! ${compEmoji} beats ${userEmoji}.`;
+            }
+        }
+
+        // Function to handle the game
+        function playGame(userChoice) {
+            const computerChoice = getComputerChoice();
+            const result = determineWinner(userChoice, computerChoice);
+            resultDisplay.innerHTML = result; // Update the result message
+        }
+
+        // Event Listeners for the choice buttons
+        choiceButtons.forEach(button => {
+            button.addEventListener('click', () => {
+                // Get the ID of the clicked button (e.g., 'rock', 'paper', or 'scissors')
+                const userChoice = button.id; 
+                playGame(userChoice);
+            });
+        });
+        
+        // Initial setup message style
+        resultDisplay.style.color = '#333'; 
+
+    </script>
+</body>
+</html>

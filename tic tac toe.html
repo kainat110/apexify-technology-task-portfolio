@@ -1,0 +1,194 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Tic-Tac-Toe</title>
+    <style>
+        /* --- CSS STYLES --- */
+        body {
+            font-family: Arial, sans-serif;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            min-height: 100vh;
+            margin: 0;
+            background-color: #f4f4f9;
+        }
+
+        h1 {
+            color: #333;
+            margin-bottom: 20px;
+        }
+
+        #game-board {
+            display: grid;
+            grid-template-columns: repeat(3, 100px);
+            grid-template-rows: repeat(3, 100px);
+            gap: 5px;
+            background-color: #333;
+            border: 5px solid #333;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+        }
+
+        .cell {
+            background-color: #fff;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 4em;
+            font-weight: bold;
+            cursor: pointer;
+            transition: background-color 0.2s;
+            color: #007bff; /* Default color for X */
+        }
+
+        .cell:hover {
+            background-color: #e2e6ea;
+        }
+
+        .cell.O {
+            color: #dc3545; /* Color for O */
+        }
+
+        #message {
+            margin-top: 20px;
+            font-size: 1.5em;
+            font-weight: bold;
+            color: #28a745;
+        }
+
+        #restart-button {
+            margin-top: 20px;
+            padding: 10px 20px;
+            font-size: 1.2em;
+            cursor: pointer;
+            background-color: #007bff;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            transition: background-color 0.3s;
+        }
+
+        #restart-button:hover {
+            background-color: #0056b3;
+        }
+    </style>
+</head>
+<body>
+    <h1>Tic-Tac-Toe</h1>
+    <div id="game-board">
+        </div>
+    <div id="message"></div>
+    <button id="restart-button">Restart Game</button>
+
+    <script>
+        // --- JAVASCRIPT LOGIC ---
+        const board = document.getElementById('game-board');
+        const message = document.getElementById('message');
+        const restartButton = document.getElementById('restart-button');
+        let gameActive = true;
+        let currentPlayer = 'X';
+        // Array representing the board state. Null means empty.
+        let gameState = Array(9).fill(null); 
+
+        // Winning combinations (indices of the gameState array)
+        const winningConditions = [
+            [0, 1, 2], [3, 4, 5], [6, 7, 8], // Rows
+            [0, 3, 6], [1, 4, 7], [2, 5, 8], // Columns
+            [0, 4, 8], [2, 4, 6]             // Diagonals
+        ];
+
+        // --- Core Functions ---
+
+        // 1. Initialize the board structure
+        function initializeGame() {
+            board.innerHTML = ''; // Clear existing cells
+            gameState.fill(null);
+            gameActive = true;
+            currentPlayer = 'X';
+            message.textContent = `Player ${currentPlayer}'s turn`;
+
+            for (let i = 0; i < 9; i++) {
+                const cell = document.createElement('div');
+                cell.classList.add('cell');
+                cell.setAttribute('data-index', i);
+                cell.addEventListener('click', handleCellClick);
+                board.appendChild(cell);
+            }
+        }
+
+        // 2. Handle a click on a cell
+        function handleCellClick(event) {
+            const clickedCell = event.target;
+            const clickedCellIndex = parseInt(clickedCell.getAttribute('data-index'));
+
+            // Check if the game is active or the cell is already filled
+            if (gameState[clickedCellIndex] !== null || !gameActive) {
+                return;
+            }
+
+            // Update the game state and the cell's display
+            gameState[clickedCellIndex] = currentPlayer;
+            clickedCell.textContent = currentPlayer;
+            clickedCell.classList.add(currentPlayer); // Add class for color
+
+            // Check for a win or draw
+            handleResultValidation();
+
+            // Switch player if the game is still active
+            if (gameActive) {
+                currentPlayer = currentPlayer === 'X' ? 'O' : 'X';
+                message.textContent = `Player ${currentPlayer}'s turn`;
+            }
+        }
+
+        // 3. Check if the current move results in a win or a draw
+        function handleResultValidation() {
+            let roundWon = false;
+
+            // Loop through all winning conditions
+            for (let i = 0; i < winningConditions.length; i++) {
+                const winCondition = winningConditions[i];
+                // Get the values in the three cells of the current condition
+                let a = gameState[winCondition[0]];
+                let b = gameState[winCondition[1]];
+                let c = gameState[winCondition[2]];
+
+                // If any cell is empty, continue to the next condition
+                if (a === null || b === null || c === null) {
+                    continue;
+                }
+
+                // If all three cells have the same non-null value, we have a winner
+                if (a === b && b === c) {
+                    roundWon = true;
+                    break;
+                }
+            }
+
+            if (roundWon) {
+                message.textContent = `Player ${currentPlayer} has won! 🎉`;
+                gameActive = false;
+                return;
+            }
+
+            // Check for a draw (if no nulls are left and no one has won)
+            let roundDraw = !gameState.includes(null);
+            if (roundDraw) {
+                message.textContent = `It's a Draw! 🤝`;
+                gameActive = false;
+                return;
+            }
+        }
+
+        // --- Event Listeners and Initial Setup ---
+        
+        restartButton.addEventListener('click', initializeGame);
+
+        // Start the game when the page loads
+        initializeGame();
+    </script>
+</body>
+</html>

@@ -1,0 +1,190 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Simple To-Do List</title>
+
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f9;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            margin: 0;
+        }
+
+        .container {
+            background-color: #fff;
+            padding: 30px;
+            border-radius: 10px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+            width: 90%;
+            max-width: 400px;
+        }
+
+        h1 {
+            text-align: center;
+            color: #333;
+            margin-bottom: 20px;
+        }
+
+        .input-group {
+            display: flex;
+            margin-bottom: 20px;
+        }
+
+        #taskInput {
+            flex-grow: 1;
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 5px 0 0 5px;
+            font-size: 16px;
+        }
+
+        #addButton {
+            padding: 10px 15px;
+            background-color: #007bff;
+            color: white;
+            border: none;
+            border-radius: 0 5px 5px 0;
+            cursor: pointer;
+            font-size: 16px;
+            transition: background-color 0.2s;
+        }
+
+        #addButton:hover {
+            background-color: #0056b3;
+        }
+
+        #taskList {
+            list-style: none;
+            padding: 0;
+        }
+
+        #taskList li {
+            background-color: #f9f9f9;
+            padding: 10px;
+            border-radius: 5px;
+            margin-bottom: 8px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-size: 16px;
+            word-break: break-word; /* Allows long words to break */
+        }
+
+        #taskList li.completed {
+            text-decoration: line-through;
+            color: #888;
+            background-color: #eee;
+        }
+
+        .delete-btn {
+            background: none;
+            border: none;
+            color: #dc3545;
+            font-weight: bold;
+            cursor: pointer;
+            margin-left: 10px;
+            font-size: 18px;
+            line-height: 1; /* Aligns the 'X' better */
+        }
+        
+        /* Optional: Style to make the task name clickable for toggle */
+        .task-name {
+            cursor: pointer;
+            flex-grow: 1;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        <h1>To-Do List</h1>
+        <div class="input-group">
+            <input type="text" id="taskInput" placeholder="Add a new task...">
+            <button id="addButton">Add</button>
+        </div>
+        <ul id="taskList">
+            </ul>
+    </div>
+
+    <script>
+        // Get the DOM elements
+        const taskInput = document.getElementById('taskInput');
+        const addButton = document.getElementById('addButton');
+        const taskList = document.getElementById('taskList');
+
+        // Function to add a new task
+        function addTask() {
+            const taskText = taskInput.value.trim();
+
+            if (taskText === "") {
+                alert("Please enter a task.");
+                return;
+            }
+
+            // Create a new list item (li)
+            const listItem = document.createElement('li');
+
+            // Create a span for the task name and make it clickable to toggle completion
+            const taskName = document.createElement('span');
+            taskName.textContent = taskText;
+            taskName.classList.add('task-name');
+            taskName.addEventListener('click', toggleCompletion);
+            
+            // Create a delete button
+            const deleteButton = document.createElement('button');
+            deleteButton.textContent = '✖'; // Unicode multiplication sign or 'X'
+            deleteButton.classList.add('delete-btn');
+            deleteButton.addEventListener('click', deleteTask);
+
+            // Append the task name and delete button to the list item
+            listItem.appendChild(taskName);
+            listItem.appendChild(deleteButton);
+            
+            // Add the new list item to the task list
+            taskList.appendChild(listItem);
+
+            // Clear the input field
+            taskInput.value = '';
+            taskInput.focus();
+        }
+
+        // Function to toggle the completion status of a task
+        function toggleCompletion(event) {
+            // event.target is the span element (taskName)
+            const listItem = event.target.parentNode;
+            listItem.classList.toggle('completed');
+        }
+
+        // Function to delete a task
+        function deleteTask(event) {
+            // event.target is the delete button
+            const listItem = event.target.parentNode;
+            taskList.removeChild(listItem);
+        }
+
+        // Event Listeners
+        // 1. Add button click
+        addButton.addEventListener('click', addTask);
+
+        // 2. 'Enter' key press in the input field
+        taskInput.addEventListener('keypress', function(event) {
+            if (event.key === 'Enter') {
+                addTask();
+            }
+        });
+        
+        // Optional: Load initial tasks if you wanted to implement localStorage persistence later
+        // For this single-file basic version, we just focus the input on load.
+        document.addEventListener('DOMContentLoaded', () => {
+             taskInput.focus();
+        });
+        
+    </script>
+</body>
+</html>
